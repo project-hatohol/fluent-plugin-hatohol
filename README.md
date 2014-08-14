@@ -24,7 +24,7 @@ TODO
 
 ## License
 
-GPL 2 or later. See doc/text/gpl-2.txt for details.
+LGPL 2.1 or later. See doc/text/lgpl-2.1.txt for details.
 
 ## Mailing list
 
