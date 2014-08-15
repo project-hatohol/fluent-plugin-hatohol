@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.summary = "A Fluentd plugin to send events to Hatohol"
   spec.description = "You can integrated log monitoring system with Hatohol"
   spec.homepage = "https://github.com/project-hatohol/fluent-plugin-hatohol"
-  spec.license = "LGPLv2.1 or later"
+  spec.license = "LGPL-2.1+"
 
   spec.files = ["README.md", "Gemfile", "#{spec.name}.gemspec"]
   spec.files += [".yardopts"]
