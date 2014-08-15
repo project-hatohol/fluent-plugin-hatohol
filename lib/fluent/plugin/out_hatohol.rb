@@ -20,10 +20,7 @@ module Fluent
   class HatoholOutput < BufferedOutput
     Plugin.register_output("hatohol", self)
 
-    config_param :host, :string
-    config_param :port, :integer, :default => 5672
-    config_param :user, :string, :default => "guest"
-    config_param :password, :string, :default => "guest"
+    config_param :url, :string, :default => nil
     config_param :queue_name, :string
 
     def configure(conf)
@@ -33,13 +30,7 @@ module Fluent
 
     def start
       super
-      options = {
-        :host     => @host,
-        :port     => @port,
-        :user     => @user,
-        :password => @password,
-      }
-      @connection = Bunny.new(options)
+      @connection = Bunny.new(url || {})
       @connection.start
       @channel = @connection.create_channel
       @queue = @channel.queue(@queue_name)
