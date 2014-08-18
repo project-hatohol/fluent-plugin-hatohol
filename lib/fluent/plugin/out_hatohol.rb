@@ -22,6 +22,9 @@ module Fluent
 
     config_param :url, :string, :default => nil
     config_param :queue_name, :string
+    config_param :tls_cert, :string, :default => nil
+    config_param :tls_key, :string, :default => nil
+    config_param :tls_ca_certificates, :array, :default => []
 
     def configure(conf)
       super
@@ -30,7 +33,12 @@ module Fluent
 
     def start
       super
-      @connection = Bunny.new(url || {})
+      options = {
+        :tls_cert            => @tls_cert,
+        :tls_key             => @tls_key,
+        :tls_ca_certificates => @tls_ca_certificates,
+      }
+      @connection = Bunny.new(url || {}, options)
       @connection.start
       @channel = @connection.create_channel
       @queue = @channel.queue(@queue_name)
