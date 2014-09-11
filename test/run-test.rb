@@ -1,4 +1,4 @@
-# -*- mode: ruby -*-
+#!/usr/bin/env ruby
 #
 # Copyright (C) 2014 Project Hatohol
 #
@@ -15,10 +15,21 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-require "bundler/gem_tasks"
+# $VERBOSE = true
 
-task :default => :test
+Thread.abort_on_exception = true
 
-task :test do
-  ruby("test/run-test.rb")
-end
+base_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+lib_dir = File.join(base_dir, "lib")
+test_dir = File.join(base_dir, "test")
+
+require "test-unit"
+
+$LOAD_PATH.unshift(lib_dir)
+
+require "fluent/test"
+require "fluent/plugin/out_hatohol"
+
+ENV["TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE"] ||= "5000"
+
+exit(Test::Unit::AutoRunner.run(true, test_dir))

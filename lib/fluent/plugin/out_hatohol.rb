@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
+require "time"
 require "json"
 require "bunny"
 
@@ -25,6 +26,8 @@ module Fluent
     config_param :tls_cert, :string, :default => nil
     config_param :tls_key, :string, :default => nil
     config_param :tls_ca_certificates, :array, :default => []
+    config_param :host_key, :string, :default => "host"
+    config_param :content_format, :string, :default => "%{message}"
 
     def configure(conf)
       super
@@ -55,7 +58,7 @@ module Fluent
 
     def write(chunk)
       chunk.msgpack_each do |tag, time, record|
-        @queue.publish(JSON.generate(record),
+        @queue.publish(JSON.generate(build_message(tag, time, record)),
                        :content_type => "application/json")
       end
     end
@@ -65,6 +68,34 @@ module Fluent
       if @queue_name.nil?
         raise ConfigError, "Must set queue_name"
       end
+    end
+
+    def build_message(tag, time, record)
+      {
+        "type" => "event",
+        "body" => {
+          "id"        => build_id(time),
+          "timestamp" => Time.at(time).iso8601,
+          "hostName"  => record[@host_key],
+          "content"   => build_content(tag, time, record),
+        }
+      }
+    end
+
+    def build_id(time)
+      now = Time.now
+      now.to_i * 1_000_000_000 + now.nsec
+    end
+
+    def build_content(tag, time, record)
+      parameters = {
+        :tag => tag,
+        :time => time,
+      }
+      record.each do |key, value|
+        parameters[key.to_sym] = value
+      end
+      @content_format % parameters
     end
   end
 end
