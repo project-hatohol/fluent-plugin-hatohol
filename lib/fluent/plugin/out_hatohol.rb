@@ -28,6 +28,7 @@ module Fluent
     config_param :tls_ca_certificates, :array, :default => []
     config_param :host_key, :string, :default => "host"
     config_param :content_format, :string, :default => "%{message}"
+    config_param :severity_format, :string, :default => "error"
 
     def configure(conf)
       super
@@ -78,6 +79,7 @@ module Fluent
           "timestamp" => Time.at(time).iso8601,
           "hostName"  => record[@host_key],
           "content"   => build_content(tag, time, record),
+          "severity"  => build_severity(record),
         }
       }
     end
@@ -96,6 +98,14 @@ module Fluent
         parameters[key.to_sym] = value
       end
       @content_format % parameters
+    end
+
+    def build_severity(record)
+      parameters = {}
+      record.each do |key, value|
+        parameters[key.to_sym] = value
+      end
+      @severity_format % parameters
     end
   end
 end

@@ -86,4 +86,33 @@ class BuildMessageTest < Test::Unit::TestCase
                                  }))
     end
   end
+
+  sub_test_case("severity") do
+    def build_severity(config, record)
+      record["host"] ||= "www.example.com"
+      record["message"] ||= "Error!"
+      message = call_build_message(config,
+                                   "hatohol.syslog.messages",
+                                   Fluent::Engine.now,
+                                   record)
+      message["body"]["severity"]
+    end
+
+    def test_default
+      assert_equal("error",
+                   build_severity({}, {}))
+    end
+
+    def test_constatnt
+      assert_equal("warning",
+                   build_severity({"severity_format" => "warning"},
+                                  {}))
+    end
+
+    def test_parameter
+      assert_equal("critical",
+                   build_severity({"severity_format" => "%{severity}"},
+                                  {"severity" => "critical"}))
+    end
+  end
 end
