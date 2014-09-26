@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.name = "fluent-plugin-hatohol"
   spec.version = "1.0.0"
   spec.authors = ["Project Hatohol"]
-  spec.email = []
+  spec.email = ["project.hatohol@gmail.com"]
   spec.summary = "A Fluentd plugin to send events to Hatohol"
   spec.description = "You can integrated log monitoring system with Hatohol"
   spec.homepage = "https://github.com/project-hatohol/fluent-plugin-hatohol"
