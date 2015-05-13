@@ -14,6 +14,10 @@
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class BuildMessageTest < Test::Unit::TestCase
+  def setup
+    Fluent::Test.setup
+  end
+
   def parse_config(config)
     use_v1 = true
     config_string = <<-CONFIG
